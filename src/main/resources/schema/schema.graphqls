@@ -1,0 +1,41 @@
+#scalar Date
+
+type Query {
+    searchUser(searchInput: SearchInput) : UserResponse
+    searchByUserId(id : ID): User
+}
+
+type UserResponse{
+    users: [User]
+}
+
+type User {
+    id: ID
+    firstName: String
+    lastName: String
+    dateOfBirth: String
+    gender: String
+    address: [Address]
+    phone: [Phone]
+}
+
+type Address {
+    type: String
+    street1: String
+    street2: String
+    city: String
+    state: String
+    zip: Int
+}
+
+type Phone {
+    type: String
+    number: String
+    countryCode: String
+}
+
+input SearchInput {
+    firstName: String
+    lastName: String
+    dateOfBirth: String
+}

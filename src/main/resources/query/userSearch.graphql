@@ -1,0 +1,24 @@
+query searchUser($searchInput : SearchInput){
+    searchUser(searchInput: $searchInput){
+        users{
+            id
+            firstName
+            lastName
+            dateOfBirth
+            gender
+            address {
+                type
+                street1
+                street2
+                city
+                state
+                zip
+            }
+            phone {
+                type
+                countryCode
+                number
+            }
+        }
+    }
+}
