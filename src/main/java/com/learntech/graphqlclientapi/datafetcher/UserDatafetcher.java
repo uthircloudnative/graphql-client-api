@@ -6,9 +6,10 @@ import com.learntech.graphqlclientapi.service.UserSearchService;
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsQuery;
 import com.netflix.graphql.dgs.InputArgument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 /**
  * UserDatafetcher
@@ -16,9 +17,9 @@ import reactor.core.publisher.Mono;
  * @author Uthiraraj Saminathan
  */
 @DgsComponent
+@Slf4j
 public class UserDatafetcher {
 
-    private static Logger logger = LoggerFactory.getLogger(UserDatafetcher.class);
     private final UserSearchService userSearchService;
 
     public UserDatafetcher(UserSearchService userSearchService) {
@@ -26,15 +27,15 @@ public class UserDatafetcher {
     }
 
     @DgsQuery
-    public Mono<SearchUser> searchUser(@InputArgument SearchInput searchInput) throws JsonProcessingException {
-        logger.info("searchUser() Starts");
-        return userSearchService.searchUser(searchInput);
+    public Mono<List<User>> users(@InputArgument SearchInput searchInput) throws JsonProcessingException {
+        log.info("users() Starts");
+        return userSearchService.searchUsers(searchInput);
     }
 
     @DgsQuery
-    public Mono<User> searchByUserId(@InputArgument Integer id){
-        User user = userSearchService.searchById(id);
-        return Mono.just(user);
+    public Mono<User> user(@InputArgument Integer id){
+        log.info("user() Starts");
+        return userSearchService.searchById(id);
     }
 
 }

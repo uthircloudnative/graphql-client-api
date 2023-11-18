@@ -2,23 +2,22 @@ package com.learntech.graphqlclientapi.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.learntech.graphqlclientapi.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.learntech.graphqlclientapi.model.SearchInput;
+import com.learntech.graphqlclientapi.model.User;
+import com.learntech.graphqlclientapi.model.UserResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
-
-
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,10 +27,8 @@ import java.util.UUID;
  * @author Uthiraraj Saminathan
  */
 @Service
+@Slf4j
 public class UserSearchServiceImpl implements UserSearchService{
-
-    private static final Logger logger = LoggerFactory.getLogger(UserSearchServiceImpl.class);
-
     private static final String USER_SEARCH_URL = "http://localhost:8080/graphql";
 
     private final WebClient webClient;
@@ -48,7 +45,7 @@ public class UserSearchServiceImpl implements UserSearchService{
      * @return
      */
     @Override
-    public Mono<SearchUser> searchUser(SearchInput searchInput) throws JsonProcessingException {
+    public Mono<List<User>> searchUsers(SearchInput searchInput) throws JsonProcessingException {
 
        MultiValueMap<String, String> header = new LinkedMultiValueMap<>();
        header.add("trace-id", UUID.randomUUID().toString());
@@ -59,10 +56,13 @@ public class UserSearchServiceImpl implements UserSearchService{
        Map<String, Object> request = new HashMap<>();
        request.put("query",query);
 
-        String variable = objectMapper.writeValueAsString(searchInput);
-        request.put("searchInput",variable);
+        String searchInputReq = objectMapper.writeValueAsString(searchInput);
+        Map<String, String> variableMap = new HashMap<>();
+        variableMap.put("searchInput", searchInputReq);
 
-       return webClient.post()
+        request.put("variables",variableMap);
+
+        return webClient.post()
                        .uri(USER_SEARCH_URL)
                        .headers(headers -> headers.addAll(header))
                        .body(BodyInserters.fromValue(request))
@@ -71,10 +71,8 @@ public class UserSearchServiceImpl implements UserSearchService{
                        .flatMap(resp -> transform(resp));
     }
 
-    private Mono<SearchUser> transform(UserResponse userResponse) {
-        SearchUser searchUser = new SearchUser();
-        searchUser.setUsers(userResponse.getData().getSearchUser().getUsers());
-        return Mono.just(searchUser);
+    private Mono<List<User>> transform(UserResponse userResponse) {
+        return Mono.just(userResponse.getData().getUsers());
     }
 
 
@@ -83,17 +81,42 @@ public class UserSearchServiceImpl implements UserSearchService{
      * @return
      */
     @Override
-    public User searchById(Integer id) {
-        return null;
+    public Mono<User> searchById(Integer id) {
+        log.info("searchById() Starts");
+        MultiValueMap<String, String> header = new LinkedMultiValueMap<>();
+        header.add("trace-id", UUID.randomUUID().toString());
+        header.add("Content-Type", "application/json");
+
+        String query = getQuery("/query/","searchByUserId.graphql");
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("query",query);
+
+        Map<String, Object> variablesMap = new HashMap<>();
+        variablesMap.put("id", id);
+
+        request.put("variables", variablesMap);
+
+        return webClient.post()
+                .uri(USER_SEARCH_URL)
+                .headers(headers -> headers.addAll(header))
+                .body(BodyInserters.fromValue(request))
+                .retrieve()
+                .bodyToMono(UserResponse.class)
+                .flatMap(resp -> getUserData(resp));
+    }
+
+    private Mono<User> getUserData(UserResponse userResponse){
+       return Mono.just(userResponse.getData().getUser());
     }
 
     private String getQuery(String filePath, String queryName)  {
-
         ClassPathResource classPathResource = new ClassPathResource(filePath+queryName);
         try {
-           return new String(FileCopyUtils.copyToByteArray(classPathResource.getInputStream()), StandardCharsets.UTF_8);
+           return new String(FileCopyUtils.copyToByteArray(classPathResource.getInputStream()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 }

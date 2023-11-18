@@ -1,6 +1,5 @@
-query searchUser($searchInput : SearchInput){
-    searchUser(searchInput: $searchInput){
-        users{
+query users($searchInput : SearchInput){
+    users(searchInput: $searchInput){
             id
             firstName
             lastName
@@ -20,5 +19,4 @@ query searchUser($searchInput : SearchInput){
                 number
             }
         }
-    }
 }

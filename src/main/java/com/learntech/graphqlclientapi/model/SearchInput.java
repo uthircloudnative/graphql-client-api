@@ -14,6 +14,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SearchInput {
 
+    private Integer id;
     private String firstName;
     private String lastName;
     private Date dateOfBirth;

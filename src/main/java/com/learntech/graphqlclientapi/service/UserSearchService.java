@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.learntech.graphqlclientapi.model.*;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  * UserSearchService
  *
@@ -11,8 +13,8 @@ import reactor.core.publisher.Mono;
  */
 public interface UserSearchService {
 
-    Mono<SearchUser> searchUser(SearchInput searchInput) throws JsonProcessingException;
+    Mono<List<User>> searchUsers(SearchInput searchInput) throws JsonProcessingException;
 
-    User searchById(Integer id);
+    Mono<User> searchById(Integer id);
 
 }

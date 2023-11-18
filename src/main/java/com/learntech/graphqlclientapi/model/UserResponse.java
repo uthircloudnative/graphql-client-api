@@ -9,7 +9,5 @@ import lombok.Data;
  */
 @Data
 public class UserResponse {
-
     private SearchUserResponse data;
-
 }

@@ -1,6 +1,9 @@
 package com.learntech.graphqlclientapi.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * SearchUserResponse
@@ -9,6 +12,6 @@ import lombok.Data;
  */
 @Data
 public class SearchUserResponse {
-
-    private SearchUser searchUser;
+      private List<User> users;
+      private User user;
 }
