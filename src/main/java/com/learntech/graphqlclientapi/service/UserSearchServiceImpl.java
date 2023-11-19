@@ -58,7 +58,7 @@ public class UserSearchServiceImpl implements UserSearchService{
 
         //String searchInputReq = objectMapper.writeValueAsString(searchInput);
         Map<String, Object> variableMap = new HashMap<>();
-        variableMap.put("searchInput", Map.of("firstName","Jhon","lastName","Vicky"));
+        variableMap.put("searchInput", Map.of("firstName",searchInput.getFirstName(),"lastName",searchInput.getLastName()));
 
         request.put("variables",variableMap);
 
