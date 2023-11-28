@@ -1,0 +1,32 @@
+spring:
+   config:
+     activate:
+       on-profile: local
+   graphql:
+     graphiql:
+       enabled: true
+userdata:
+  url: http://localhost:8080/graphql
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  graphql:
+    graphiql:
+      enabled: true
+userdata:
+  url: http://<testhost>/graphql
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  graphql:
+    graphiql:
+      enabled: false
+userdata:
+  url: http://<prodhost>/graphql
+

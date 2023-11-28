@@ -6,6 +6,7 @@ import com.learntech.graphqlclientapi.model.SearchInput;
 import com.learntech.graphqlclientapi.model.User;
 import com.learntech.graphqlclientapi.model.UserResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -29,10 +30,13 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class UserSearchServiceImpl implements UserSearchService{
-    private static final String USER_SEARCH_URL = "http://localhost:8080/graphql";
+    //private static final String USER_SEARCH_URL = "http://localhost:8080/graphql";
 
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
+
+    @Value("${userdata.url}")
+    private String userDataUrl;
 
     public UserSearchServiceImpl(WebClient webClient,
                                  ObjectMapper objectMapper) {
@@ -63,7 +67,7 @@ public class UserSearchServiceImpl implements UserSearchService{
         request.put("variables",variableMap);
 
         return webClient.post()
-                       .uri(USER_SEARCH_URL)
+                       .uri(userDataUrl)
                        .headers(headers -> headers.addAll(header))
                        .body(BodyInserters.fromValue(request))
                        .retrieve()
@@ -81,7 +85,7 @@ public class UserSearchServiceImpl implements UserSearchService{
      * @return
      */
     @Override
-    public Mono<User> searchById(Integer id) {
+    public Mono<User> searchById(UUID id) {
         log.info("searchById() Starts");
         MultiValueMap<String, String> header = new LinkedMultiValueMap<>();
         header.add("trace-id", UUID.randomUUID().toString());
@@ -98,7 +102,7 @@ public class UserSearchServiceImpl implements UserSearchService{
         request.put("variables", variablesMap);
 
         return webClient.post()
-                .uri(USER_SEARCH_URL)
+                .uri(userDataUrl)
                 .headers(headers -> headers.addAll(header))
                 .body(BodyInserters.fromValue(request))
                 .retrieve()

@@ -4,6 +4,7 @@ package com.learntech.graphqlclientapi.model;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * User
@@ -13,7 +14,7 @@ import java.util.List;
 @Data
 public class User {
 
-    private Integer id;
+    private UUID id;
     private String firstName;
     private String lastName;
     private String dateOfBirth;

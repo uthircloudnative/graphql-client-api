@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * UserDatafetcher
@@ -33,7 +34,7 @@ public class UserDatafetcher {
     }
 
     @DgsQuery
-    public Mono<User> user(@InputArgument Integer id){
+    public Mono<User> user(@InputArgument UUID id){
         log.info("user() Starts");
         return userSearchService.searchById(id);
     }

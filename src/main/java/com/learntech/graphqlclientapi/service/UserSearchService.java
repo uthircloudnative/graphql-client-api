@@ -5,6 +5,7 @@ import com.learntech.graphqlclientapi.model.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * UserSearchService
@@ -15,6 +16,6 @@ public interface UserSearchService {
 
     Mono<List<User>> searchUsers(SearchInput searchInput) throws JsonProcessingException;
 
-    Mono<User> searchById(Integer id);
+    Mono<User> searchById(UUID id);
 
 }
